@@ -7,7 +7,7 @@ To create a virtual environment, follow these steps:
 1. Open your terminal.
 2. Navigate to your project directory.
 3. Run the following command to create a virtual environment:
-   
+
 For this project conda was used but using pyenv is also an option. Below you have the commands to activate both types of virtual envs. It's important to note that the main difference between them is that using pyenv would create the env as a subdirectory thus it has to be ignored through the .gitignore file.
 ## Using pyenv
 
@@ -49,4 +49,9 @@ Once the virtual environment is activated, install the required packages by runn
 
 ```sh
 pip install -r requirements.txt
+```
+
+## This PROJECT uses a precommit hook please install it using:
+```sh
+pre-commit install
 ```
