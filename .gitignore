@@ -1,0 +1,22 @@
+# Byte-compiled / intermediate files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS-specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor-specific files 
+.vscode/
+
+# Python packaging
+*.egg
+*.egg-info/
+dist/
+build/
+*.wheel
+
+# Pydantic JSON schema cache
+pydantic_schema_cache/
