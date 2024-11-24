@@ -8,15 +8,16 @@ class Canvas(QtWidgets.QGraphicsView):
     def __init__(self):
         super(Canvas, self).__init__()
         self.resize(800, 800)
-        # Also set min size
-        # self.setMinimumSize(600, 600)
+        self.setMinimumSize(600, 600)
         self.scene = QtWidgets.QGraphicsScene(self)
         self.setScene(self.scene)
         self.draw_axes()
-
         self.shape_drawer = ShapeDrawer(self.scene)
 
     def draw_axes(self):
+        """
+        This function prepares the canvas by drawing the x and y axis and adding ticks after each 20 pixels.
+        """
         self.scene.clear()  # Clear the scene before drawing the axes
 
         rect = self.viewport().rect()
@@ -26,13 +27,13 @@ class Canvas(QtWidgets.QGraphicsView):
         center_x = rect.width() / 2
         center_y = rect.height() / 2
 
-        # Blue color so it doesn't interfere with the light or dark modes on the computer setup
+        # Blue color so it doesn't interfere with the light or dark modes in the local setup
         pen = QtGui.QPen(QtCore.Qt.blue)
         pen.setWidth(2)
-        grid_pen = QtGui.QPen(QtCore.Qt.blue, 1, QtCore.Qt.DashLine)
+        grid_pen = QtGui.QPen(QtCore.Qt.blue, 1, QtCore.Qt.PenStyle.DashLine)
         font = QtGui.QFont("Arial", 8)
 
-        # 1 unit of measurement is 20 pixels - same as in the case study picture
+        # 1 tick every 20 pixels - same as in the case study picture
         for i in range(0, max(rect.width(), rect.height()), GRID_STEP):
             if i < rect.width():
                 self.scene.addLine(i, 0, i, rect.height(), grid_pen)
@@ -53,9 +54,15 @@ class Canvas(QtWidgets.QGraphicsView):
         self.scene.addLine(center_x, 0, center_x, rect.height(), pen)
 
     def clear_scene(self):
+        """
+        Clears the scene and redraws the axis
+        """
         self.scene.clear()
         self.draw_axes()
 
     def resizeEvent(self, event):
+        """
+        Allow user to resize the window. Once a resize event happens, a shape would need to be redrawn by the user.
+        """
         self.draw_axes()
         super().resizeEvent(event)

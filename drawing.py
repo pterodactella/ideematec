@@ -40,6 +40,10 @@ class ShapeDrawer:
         )
 
     def draw_shape(self, drawn_shape: DrawnShape):
+        """
+        Draw the deswired shape using nodes and edges. The shapes can
+        either be a instance of the Square or the Channel class
+        """
         shape = drawn_shape.shape
         thickness = drawn_shape.thickness
 
@@ -58,7 +62,7 @@ class ShapeDrawer:
         x = center_x - width / 2
         y = center_y - height / 2
 
-        # Define the nodes
+        # Add the nodes
         nodes = [
             (x, y),
             (x + width, y),
@@ -84,6 +88,10 @@ class ShapeDrawer:
         self.add_floating_thickness(thickness, x, center_y)
 
     def add_floating_thickness(self, thickness: float, x: float = 0, y: float = 0):
+        """
+        Create a floating box with the thickness information. The box is floating and
+        it's position is calculated based on the size of the shape.
+        """
         thickness = f"T = {thickness}"
 
         text_item = QtWidgets.QGraphicsTextItem(thickness)

@@ -7,7 +7,7 @@ from models import Channel, DrawnShape, Square
 class ControlPanel(QtWidgets.QWidget):
     def __init__(self, canvas):
         super(ControlPanel, self).__init__()
-        self.canvas = canvas
+        self.canvas: Canvas = canvas
         self.init_ui()
 
     def init_ui(self):
@@ -23,35 +23,28 @@ class ControlPanel(QtWidgets.QWidget):
         # Create input fields
         self.side_label = QtWidgets.QLabel("Side:")
         self.side_input = QtWidgets.QLineEdit()
-        self.side_input.setValidator(QtGui.QDoubleValidator(0.0, 1000.0, 2))
+        self.side_input.setValidator(self.format_input())
         self.side_input.editingFinished.connect(
             lambda: self.format_input(self.side_input)
         )
 
         self.height_label = QtWidgets.QLabel("Height:")
         self.height_input = QtWidgets.QLineEdit()
-        self.height_input.setValidator(QtGui.QDoubleValidator(0.0, 1000.0, 2))
-        self.height_input.editingFinished.connect(
-            lambda: self.format_input(self.height_input)
-        )
+        self.height_input.setValidator(self.format_input())
+
         self.height_label.setVisible(False)
         self.height_input.setVisible(False)
 
         self.width_label = QtWidgets.QLabel("Width:")
         self.width_input = QtWidgets.QLineEdit()
-        self.width_input.setValidator(QtGui.QDoubleValidator(0.0, 1000.0, 2))
-        self.width_input.editingFinished.connect(
-            lambda: self.format_input(self.width_input)
-        )
+        self.width_input.setValidator(self.format_input())
+
         self.width_label.setVisible(False)
         self.width_input.setVisible(False)
 
         self.thickness_label = QtWidgets.QLabel("Thickness:")
         self.thickness_input = QtWidgets.QLineEdit()
-        self.thickness_input.setValidator(QtGui.QDoubleValidator(0.0, 1000.0, 2))
-        self.thickness_input.editingFinished.connect(
-            lambda: self.format_input(self.thickness_input)
-        )
+        self.thickness_input.setValidator(self.format_input())
 
         # Conditionally render the fields corresponging to the selected shape
         self.shape_dropdown.currentIndexChanged.connect(self.conditional_rendering)
@@ -131,14 +124,19 @@ class ControlPanel(QtWidgets.QWidget):
         with open("store.json", "w") as f:
             json.dump(shapes, f, indent=4)
 
-    def format_input(self, line_edit):
+    def format_input(self):
         """
         When having a field in and out of focus the value would get rewritten
         in a scientific notation, this function insures consistent formatting.
+        The locale configuration can be changed.
         """
-        value = line_edit.text()
-        if value:
-            line_edit.setText(f"{float(value):.2f}")
+        validator = QtGui.QDoubleValidator(0.0, 1000.0, 2)
+        validator.setLocale(
+            QtCore.QLocale(
+                QtCore.QLocale.Language.English, QtCore.QLocale.Country.UnitedKingdom
+            )
+        )
+        validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
 
 
 if __name__ == "__main__":
@@ -151,7 +149,7 @@ if __name__ == "__main__":
     control_panel = ControlPanel(canvas)
     dock_widget = QtWidgets.QDockWidget("Controls", window)
     dock_widget.setWidget(control_panel)
-    window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_widget)
+    window.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, dock_widget)
 
     window.show()
     app.exec()
