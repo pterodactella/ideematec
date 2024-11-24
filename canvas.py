@@ -18,7 +18,7 @@ class Canvas(QtWidgets.QGraphicsView):
         """
         This function prepares the canvas by drawing the x and y axis and adding ticks after each 20 pixels.
         """
-        self.scene.clear()  # Clear the scene before drawing the axes
+        self.scene.clear()
 
         rect = self.viewport().rect()
         self.scene.setSceneRect(rect)
@@ -27,7 +27,6 @@ class Canvas(QtWidgets.QGraphicsView):
         center_x = rect.width() / 2
         center_y = rect.height() / 2
 
-        # Blue color so it doesn't interfere with the light or dark modes in the local setup
         pen = QtGui.QPen(QtCore.Qt.blue)
         pen.setWidth(2)
         grid_pen = QtGui.QPen(QtCore.Qt.blue, 1, QtCore.Qt.PenStyle.DashLine)

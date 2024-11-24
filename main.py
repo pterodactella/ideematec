@@ -17,7 +17,7 @@ class ControlPanel(QtWidgets.QWidget):
         This function sets up the control widgets: dropdown with the shapes,
         input fields and button to save the shape information.
         """
-        # Create drop-down menu for choosing the shape
+        # Create drop-downs
         shape_dropdown_label = QtWidgets.QLabel("Shape:")
         self.shape_dropdown = QtWidgets.QComboBox()
         self.shape_dropdown.addItems(["SQR", "U"])
@@ -49,16 +49,16 @@ class ControlPanel(QtWidgets.QWidget):
         self.thickness_input.setValidator(self.format_input())
         self.thickness_input.textChanged.connect(self.update_shape)
 
-        # Conditionally render the fields corresponding to the selected shape
+        # Conditionally render the fields
         self.shape_dropdown.currentIndexChanged.connect(self.conditional_rendering)
         self.shape_dropdown.currentIndexChanged.connect(self.update_shape)
         self.conditional_rendering()
 
-        # Add a button to draw and save the shape
+        # Add the save button
         draw_button = QtWidgets.QPushButton("Save Shape")
         draw_button.clicked.connect(self.draw_shape)
 
-        # Add the labels
+        # Add labels
         form = QtWidgets.QFormLayout()
         form.addRow(shape_dropdown_label, self.shape_dropdown)
         form.addRow(self.side_label, self.side_input)
@@ -90,7 +90,6 @@ class ControlPanel(QtWidgets.QWidget):
         """
         Updates the shape dynamically based on user input.
         """
-        # Clear the canvas for redrawing
         self.canvas.clear_scene()
 
         # Get inputs
@@ -98,13 +97,13 @@ class ControlPanel(QtWidgets.QWidget):
         thickness = self.thickness_input.text()
 
         if shape_type == "SQR":
-            # For SQR, get the side length
+            # get the side length
             side = float(self.side_input.text())
             self.shape_drawer.draw_shape(
                 DrawnShape(shape=Square(side=side), thickness=thickness)
             )
         else:
-            # For U, get height and width
+            # get height and width
             height = float(self.height_input.text())
             width = float(self.width_input.text())
             self.shape_drawer.draw_shape(
@@ -154,7 +153,7 @@ class ControlPanel(QtWidgets.QWidget):
         except (FileNotFoundError, json.JSONDecodeError):
             shapes = {}
 
-        # increment the shape key
+        # Increment the shape key
         shapes[f"Shape_{len(shapes) + 1}"] = array
         print(shapes)
         with open("store.json", "w") as f:
