@@ -2,12 +2,14 @@ import json
 from PySide6 import QtWidgets, QtCore, QtGui
 from canvas import Canvas
 from models import Channel, DrawnShape, Square
+from drawing import ShapeDrawer
 
 
 class ControlPanel(QtWidgets.QWidget):
     def __init__(self, canvas):
         super(ControlPanel, self).__init__()
         self.canvas: Canvas = canvas
+        self.shape_drawer = ShapeDrawer(self.canvas.scene)
         self.init_ui()
 
     def init_ui(self):
@@ -24,13 +26,12 @@ class ControlPanel(QtWidgets.QWidget):
         self.side_label = QtWidgets.QLabel("Side:")
         self.side_input = QtWidgets.QLineEdit()
         self.side_input.setValidator(self.format_input())
-        self.side_input.editingFinished.connect(
-            lambda: self.format_input(self.side_input)
-        )
+        self.side_input.textChanged.connect(self.update_shape)
 
         self.height_label = QtWidgets.QLabel("Height:")
         self.height_input = QtWidgets.QLineEdit()
         self.height_input.setValidator(self.format_input())
+        self.height_input.textChanged.connect(self.update_shape)
 
         self.height_label.setVisible(False)
         self.height_input.setVisible(False)
@@ -38,6 +39,7 @@ class ControlPanel(QtWidgets.QWidget):
         self.width_label = QtWidgets.QLabel("Width:")
         self.width_input = QtWidgets.QLineEdit()
         self.width_input.setValidator(self.format_input())
+        self.width_input.textChanged.connect(self.update_shape)
 
         self.width_label.setVisible(False)
         self.width_input.setVisible(False)
@@ -45,13 +47,15 @@ class ControlPanel(QtWidgets.QWidget):
         self.thickness_label = QtWidgets.QLabel("Thickness:")
         self.thickness_input = QtWidgets.QLineEdit()
         self.thickness_input.setValidator(self.format_input())
+        self.thickness_input.textChanged.connect(self.update_shape)
 
-        # Conditionally render the fields corresponging to the selected shape
+        # Conditionally render the fields corresponding to the selected shape
         self.shape_dropdown.currentIndexChanged.connect(self.conditional_rendering)
+        self.shape_dropdown.currentIndexChanged.connect(self.update_shape)
         self.conditional_rendering()
 
         # Add a button to draw and save the shape
-        draw_button = QtWidgets.QPushButton("Draw Shape")
+        draw_button = QtWidgets.QPushButton("Save Shape")
         draw_button.clicked.connect(self.draw_shape)
 
         # Add the labels
@@ -82,16 +86,46 @@ class ControlPanel(QtWidgets.QWidget):
         self.width_label.setVisible(visibility.get("width", False))
         self.width_input.setVisible(visibility.get("width", False))
 
-    def draw_shape(self):
+    def update_shape(self):
         """
-        This function draws the shapes depending of the user selection
+        Updates the shape dynamically based on user input.
         """
-
-        # Clear the previous drawing
+        # Clear the canvas for redrawing
         self.canvas.clear_scene()
 
+        # Get inputs
         shape_type = self.shape_dropdown.currentText()
-        thickness = float(self.thickness_input.text())
+        thickness = self.thickness_input.text()
+
+        if shape_type == "SQR":
+            # For SQR, get the side length
+            side = float(self.side_input.text())
+            self.shape_drawer.draw_shape(
+                DrawnShape(shape=Square(side=side), thickness=thickness)
+            )
+        else:
+            # For U, get height and width
+            height = float(self.height_input.text())
+            width = float(self.width_input.text())
+            self.shape_drawer.draw_shape(
+                DrawnShape(
+                    shape=Channel(height=height, width=width), thickness=thickness
+                )
+            )
+
+    def draw_shape(self):
+        """
+        This function draws the shapes depending on the user selection
+        """
+        shape_type = self.shape_dropdown.currentText()
+        thickness = self.thickness_input.text()
+        if not thickness:
+            return
+
+        try:
+            thickness = float(thickness)
+        except ValueError:
+            return
 
         if shape_type == "SQR":
             side = float(self.side_input.text())
@@ -100,11 +134,13 @@ class ControlPanel(QtWidgets.QWidget):
         elif shape_type == "U":
             height = float(self.height_input.text())
             width = float(self.width_input.text())
-            channel = Channel(height=height, width=width)
-            drawn_shape = DrawnShape(shape=channel, thickness=thickness)
+            drawn_shape = DrawnShape(
+                shape=Channel(height=height, width=width), thickness=thickness
+            )
 
         # Draw and save
-        self.canvas.shape_drawer.draw_shape(drawn_shape)
+        self.canvas.clear_scene()
+        self.shape_drawer.draw_shape(drawn_shape)
         self.save_shape(drawn_shape)
 
     def save_shape(self, shape: DrawnShape):
@@ -150,7 +186,7 @@ if __name__ == "__main__":
     control_panel = ControlPanel(canvas)
     dock_widget = QtWidgets.QDockWidget("Controls", window)
     dock_widget.setWidget(control_panel)
-    window.addDockWidget(QtCore.Qt.DockWidgetArea.LeftDockWidgetArea, dock_widget)
+    window.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_widget)
 
     window.show()
     app.exec()

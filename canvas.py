@@ -49,7 +49,7 @@ class Canvas(QtWidgets.QGraphicsView):
                     text.setDefaultTextColor(QtCore.Qt.blue)
                     text.setPos(center_x + 5, i - text.boundingRect().height() / 2)
 
-        # Draw the axis on top of the grid
+        # Draw the axis
         self.scene.addLine(0, center_y, rect.width(), center_y, pen)
         self.scene.addLine(center_x, 0, center_x, rect.height(), pen)
 
@@ -62,7 +62,8 @@ class Canvas(QtWidgets.QGraphicsView):
 
     def resizeEvent(self, event):
         """
-        Allow user to resize the window. Once a resize event happens, a shape would need to be redrawn by the user.
+        Allow user to resize the window. Once a resize event happens,
+        a shape would need to be redrawn by the user.
         """
         self.draw_axes()
         super().resizeEvent(event)

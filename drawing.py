@@ -41,8 +41,7 @@ class ShapeDrawer:
 
     def draw_shape(self, drawn_shape: DrawnShape):
         """
-        Draw the deswired shape using nodes and edges. The shapes can
-        either be a instance of the Square or the Channel class
+        Draw the shape using nodes and edges. The shapes can either be a instance of the Square or the Channel class
         """
         shape = drawn_shape.shape
         thickness = drawn_shape.thickness
@@ -52,7 +51,7 @@ class ShapeDrawer:
         center_x = scene_rect.width() / 2
         center_y = scene_rect.height() / 2
 
-        # Determine the dimensions and the x, y position of the shape
+        # Determine the type of the shape and its dimensions
         if isinstance(shape, Square):
             width = height = shape.side
         else:
