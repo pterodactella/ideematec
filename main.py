@@ -95,17 +95,25 @@ class ControlPanel(QtWidgets.QWidget):
         # Get inputs
         shape_type = self.shape_dropdown.currentText()
         thickness = self.thickness_input.text()
+        if not thickness:
+            return
 
         if shape_type == "SQR":
             # get the side length
-            side = float(self.side_input.text())
+            side = self.side_input.text()
+            if not side:
+                return
+
             self.shape_drawer.draw_shape(
                 DrawnShape(shape=Square(side=side), thickness=thickness)
             )
         else:
             # get height and width
-            height = float(self.height_input.text())
-            width = float(self.width_input.text())
+            height = self.height_input.text()
+            width = self.width_input.text()
+            if not height or not width:
+                return
+
             self.shape_drawer.draw_shape(
                 DrawnShape(
                     shape=Channel(height=height, width=width), thickness=thickness
@@ -118,21 +126,26 @@ class ControlPanel(QtWidgets.QWidget):
         """
         shape_type = self.shape_dropdown.currentText()
         thickness = self.thickness_input.text()
+
         if not thickness:
             return
 
-        try:
-            thickness = float(thickness)
-        except ValueError:
-            return
-
+        thickness = float(thickness)
         if shape_type == "SQR":
             side = float(self.side_input.text())
+
+            if not side:
+                return
+
             square = Square(side=side)
             drawn_shape = DrawnShape(shape=square, thickness=thickness)
+
         elif shape_type == "U":
             height = float(self.height_input.text())
             width = float(self.width_input.text())
+            if not height or not width:
+                return
+
             drawn_shape = DrawnShape(
                 shape=Channel(height=height, width=width), thickness=thickness
             )
