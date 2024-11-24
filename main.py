@@ -137,6 +137,7 @@ class ControlPanel(QtWidgets.QWidget):
             )
         )
         validator.setNotation(QtGui.QDoubleValidator.Notation.StandardNotation)
+        return validator
 
 
 if __name__ == "__main__":
